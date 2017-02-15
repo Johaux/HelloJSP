@@ -1,0 +1,20 @@
+{
+  "name": "Probando ChatClient",
+  "version": "0.3",
+  "manifest_version": 2,
+  "minimum_chrome_version": "33",
+  "description": "Probando ChatClient",
+
+"browser_action":{
+  "default_popup": "index.html",
+  "default_icon" : "128.png",
+  "default_title": "Probemos el chat"
+},
+"icons": {
+    "128": "128.png"
+  },
+  "permissions": [
+    "activeTab",
+    "https://ajax.googleapis.com/"
+  ]
+}

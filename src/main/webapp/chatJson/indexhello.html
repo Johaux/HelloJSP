@@ -1,0 +1,135 @@
+<html>
+    <head>
+        <title>
+            Node.js chat
+        </title>
+        <style>
+            #contentWrap{
+                display: none;
+            }
+            #chatWrap{
+                float: left;
+            }
+            #chat{
+                position: relative;
+                width: 100%;
+                float:left;
+                min-height:100px;
+                height: 75%;
+                overflow: auto;
+            }
+        </style>
+
+        <script src="https://code.jquery.com/jquery.js"></script>
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+        <script src='https://code.responsivevoice.org/responsivevoice.js'></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <!--<div class="input-group" style="width:300px;text-align:center;margin:0 auto;" id="nickWrap">
+                <input id="nickname" class="form-control input-lg" type="text" placeholder="Enter your username">
+                <span class="input-group-btn">
+                    <button class="btn btn-lg btn-primary" type="submit" id="setNick">OK</button>
+                </span>
+            </div>-->
+            <div class="alert fade in alert-danger alert-dismissable" data-dismiss="alert" id="login-error" style="display:none;">
+                <button type="button" class="close" id="closeAlert">×</button>
+                That username is already taken. Try again.
+            </div>
+            <div id="contentWrap" class="row" style="height: 70%;">
+                <div class="col-md-2"></div>
+                <div id="chatWrap"  class="col-md-6">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">Chat</div>
+                        <div id="chat" class="panel-body"></div>
+                    </div>
+                    <div>
+                        <form id="send-message" class="input-group" style="text-align:center;margin:0 auto;">
+                            <input id="message" class="form-control input-lg" type="text">
+                            <span class="input-group-btn">
+                                <button class="btn btn-lg btn-primary" type="submit">Send</button>
+                            </span>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Users
+                        </div>
+                        <div id="nicknamesConectados" class="panel-body"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            jQuery(function ($) {
+                //$("#nickname").focus();
+                var evento = io.connect();
+                //CLICK AL BOTON DE ENVIAR NICKNAME
+                //$('#setNick').click(function (e) {
+                    //MANDAMOS EL $('#nickname').val() Y RESIBIMOS UNA FUNCION CON existeNickname(true o false)
+                    //evento.emit('new user', $('#nickname').val(), function (existeNickname) {
+                    evento.emit('new user', window.location.href.split('/')[window.location.href.split('/').length-1].replace("%20"," ").replace("%20"," ").replace("%20"," ").replace("%20"," ").replace("%20"," "), function (existeNickname) {
+                        //SI NO existeNickname MOSTRAMOS EL CONTENEDOR CON LA LISTA DE LOS NICKNAME Y EL CONTENEDOR DEL CHAT
+                        if (existeNickname===false) {
+                            $('#nickWrap').hide();
+                            $('#contentWrap').show();
+                        } 
+                        //SI SI EXISTE EL NICKNAME MOSTRAMOS EL CONTENDOR #login-error CON EL MENSAJE DE QUE ESE NICKNAME YA EXISTE
+                        if (existeNickname===true) {
+                            $("#login-error").show();
+                        }
+                    });
+                    //$('#nickname').val('');
+                    //e.preventDefault();
+                //});
+                $('#closeAlert').click(function (e) {
+                    $("#login-error").hide();
+                });
+                $('#send-message').submit(function (e) {
+                    e.preventDefault();
+                    if ($('#message').val() !== ''){
+                        evento.emit('send message', $('#message').val());
+                    }
+                    $('#message').val('');
+                });
+                //AL RECIBIR EL EVENTO "new message" RECIBIMOS UN ARREGLO CON MENSAJE Y NICKNAME LOS CUALES ESCRIBIMOS EN EL CHAT
+                evento.on('new message', function (mensajeYNickname) {
+                    $('#chat').append('<b>' + mensajeYNickname.nick + ":</b> " + mensajeYNickname.msg + "<br/>");
+                    responsiveVoice.speak(mensajeYNickname.nick + ", dice: " + mensajeYNickname.msg,  "Spanish Female");
+                });
+                //AL RECIBIR EL EVENTO "usernames" RECIBIMOS EL ARRAY listaDeNicknames CON LA LISTA DE TODOS LOS NICKNAMES CONECTADOS
+                evento.on('usernames', function (listaDeNicknames) {
+                    //CREAMOS LA VARIABLE html PARA ESCRIBIR AHI TODOS LOS NICKNAMES CONECTADOS
+                    var html = '';
+                    for (var nicknameConectado in listaDeNicknames) {
+                        html += nicknameConectado + '<br/>';
+                    }
+                    //ESCRIBIMOS EN EL CONTENEDOR nicknamesConectados TODOS LOS NICKNAMES CONECTADOS
+                    $('#nicknamesConectados').html(html);
+                });
+
+                //$("#nickname").val($_GET['nombre']);
+            });
+
+            function $_GET(param) {
+				var vars = {};
+				window.location.href.replace( location.hash, '' ).replace( 
+					/[?&]+([^=&]+)=?([^&]*)?/gi, // regexp
+					function( m, key, value ) { // callback
+						vars[key] = value !== undefined ? value : '';
+					}
+				);
+
+				if ( param ) {
+					return vars[param] ? vars[param] : null;	
+				}
+				return vars;
+			}
+        </script>
+    </body>
+</html>
