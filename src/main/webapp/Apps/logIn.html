@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>New Hello</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+
+        <div id="logIn" align="center">
+            <h1>Log In</h1>
+
+            <form name="frmAccess" action="../Apps/logIn.jsp" method="post">
+                <input type="email" placeholder="Ingresa tu email" name="userName"/><br></br>
+                <input type="password" placeholder="Ingresa tu contraseña"  name="mainPass"/><br></br>
+                <input type="submit" name="btnAccess" value="Ingresar"/>
+
+                <a href="../Apps/newUser.html">
+                    <input type="button" name="btnRegister" 
+                           value="Registrar">
+                </a>
+
+                <a href="../Apps/deleteUser.jsp">
+                    <input type="button" name="btnDelete" 
+                           value="Registrar">
+                </a>
+
+
+                <a href="../Apps/configInfo.html">
+                    <input type="button" name="btnUpdate" 
+                           value="Registrar">
+                </a>
+
+
+            </form >
+        </div>
+
+    </body>
+</html>
